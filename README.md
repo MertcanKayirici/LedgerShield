@@ -46,7 +46,34 @@ Unlike traditional systems that rely on application logic, LedgerShield enforces
 - **Idempotency Layer** → Safe retries without duplication  
 - **Indexed Views** → Optimized read performance for balances  
 - **Strict Constraints** → Impossible invalid state
-  
+
+---
+
+## 🧠 Documentation
+
+### 📄 Architecture
+Detailed explanation of system design, data flow, and database-level guarantees.
+
+👉 [View Architecture](docs/architecture.md)
+
+---
+
+### 📊 Performance Report
+Benchmark results comparing raw queries vs indexed views and optimizations.
+
+👉 [View Performance Report](docs/performance_report.md)
+
+---
+
+### 🖼️ Diagrams
+Visual representations of system flow, database schema, and performance comparison.
+
+- System Flow
+- Database Diagram
+- Before / After Performance
+
+📁 Located in: `docs/diagrams/`
+
 ---
 
 ## 🗺️ Database Schema
