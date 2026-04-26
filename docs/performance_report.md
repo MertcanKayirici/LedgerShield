@@ -2,18 +2,18 @@
 
 ## 🎯 Overview
 
-This report evaluates the performance of balance calculation queries in the LedgerShield system.
+This report demonstrates the performance impact of optimizing balance queries in the LedgerShield system.
 
-The goal is to measure the impact of:
+The focus is on eliminating full table scans and enabling efficient aggregation using:
 
-* Index optimization
-* Indexed view usage
+* Filtered indexes
+* Indexed views
 
 ---
 
 ## 🧪 Test Scenario
 
-Balance calculation query:
+### Query
 
 ```sql
 SELECT 
@@ -24,22 +24,28 @@ WHERE is_deleted = 0
 GROUP BY account;
 ```
 
-Dataset:
+### Dataset
 
 * ~10,000 transactions
 * Multi-tenant structure
-* Double-entry ledger records
+* Double-entry ledger entries
 
 ---
 
 ## 🔴 Before Optimization
 
-Execution without indexed view and optimized indexes.
+Execution without proper indexing or pre-aggregation.
 
-* Execution Type: Table Scan
-* Logical Reads: 234
-* CPU Time: ~10 ms
-* Elapsed Time: ~10 ms
+* Execution Plan: **Table Scan**
+* Logical Reads: **234**
+* CPU Time: **~10 ms**
+* Elapsed Time: **~10 ms**
+
+### ❗ Problem
+
+* Full table scan on `ledger_entries`
+* High I/O cost
+* Poor scalability as data grows
 
 ---
 
@@ -47,51 +53,72 @@ Execution without indexed view and optimized indexes.
 
 Execution using:
 
-* Filtered index
-
+* Filtered index (`is_deleted = 0`)
 * Indexed view (`vw_account_balance`)
 
-* Execution Type: Index Seek
+* Execution Plan: **Index Seek**
 
-* Logical Reads: 2
+* Logical Reads: **2**
 
-* CPU Time: ~0 ms
+* CPU Time: **~0 ms**
 
-* Elapsed Time: ~0–1 ms
+* Elapsed Time: **~0–1 ms**
+
+### ✅ Improvement
+
+* Eliminated full table scan
+* Reduced I/O dramatically
+* Enabled pre-aggregated reads
 
 ---
 
 ## 📊 Comparison
 
-| Metric         | Before | After |
-| -------------- | ------ | ----- |
-| Logical Reads  | 234    | 2     |
-| CPU Time       | 10 ms  | 0 ms  |
-| Execution Plan | Scan   | Seek  |
+| Metric        | Before | After | Improvement  |
+| ------------- | ------ | ----- | ------------ |
+| Logical Reads | 234    | 2     | 🔥 ~99% ↓  (~117x)  |
+| CPU Time      | 10 ms  | 0 ms  | ⚡ Near 0     |
+| Execution     | Scan   | Seek  | 💥 Optimized |
 
 ---
 
 ## 🖼️ Visual Evidence
 
-![Performance Comparison](docs/diagrams/before_after_balance_update.png)
+![Performance Comparison](diagrams/before_after_balance_update.png)
 
 ---
 
 ## 🧠 Analysis
 
-* Full table scan is eliminated after optimization
-* Indexed view enables pre-aggregated balance calculation
-* Filtered index reduces unnecessary row reads (`is_deleted = 0`)
-* Query cost is reduced dramatically
+The optimization works because:
+
+* Indexed view stores pre-aggregated balances
+* Filtered index limits unnecessary row access
+* Query avoids scanning entire ledger table
+
+This transforms the query from **O(n)** scanning to near **constant-time lookup**.
 
 ---
 
 ## 🚀 Conclusion
 
-The system achieves significant performance improvement by:
+LedgerShield achieves high performance by:
 
-* Using indexed views for aggregation
-* Applying targeted indexing strategy
-* Reducing I/O operations
+* Shifting computation from query-time to write-time
+* Using indexed views for real-time aggregation
+* Minimizing I/O operations
 
-This demonstrates that the LedgerShield system is optimized for **read-heavy financial workloads**.
+### 🔥 Key Insight
+
+> Performance is not improved by faster queries,
+> but by avoiding unnecessary work entirely.
+
+---
+
+## 🎯 Result
+
+The system is optimized for:
+
+* Read-heavy financial workloads
+* Real-time balance queries
+* Scalable ledger operations
