@@ -1,152 +1,189 @@
 # 💳 LedgerShield
+### **Database-First Financial Integrity System Built for Absolute Consistency**
 
-LedgerShield is a **database-first financial transaction system** built on SQL Server.
+<p align="center">
+  <img src="https://img.shields.io/badge/SQL%20Server-Primary-blue?style=for-the-badge&logo=microsoftsqlserver" />
+  <img src="https://img.shields.io/badge/Architecture-Database--First-critical?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Consistency-Strong%20(SERIALIZABLE)-success?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Design-Double%20Entry%20Ledger-informational?style=for-the-badge" />
+</p>
 
-It enforces **financial correctness at the database layer** using:
+---
 
-* double-entry ledger
-* strict constraints
-* triggers
-* idempotent operations
+## 📌 Overview
+
+**LedgerShield** is a **production-grade, database-first financial transaction engine** designed to guarantee **data correctness at the lowest level — the database itself**.
+
+Unlike traditional systems that rely on application logic, LedgerShield enforces **financial integrity directly within SQL Server** using:
+
+- deterministic constraints  
+- transactional guarantees  
+- trigger-based validations  
+- idempotent operations  
+
+> 💡 _If data is incorrect, it simply cannot exist._
 
 ---
 
 ## 🚀 Features
 
-* 💰 Double-entry accounting (debit = credit)
-* 🔁 Idempotent transactions (duplicate-safe)
-* ⚡ Real-time balance updates (trigger-based)
-* 📊 Indexed view optimization (fast reads)
-* 🧠 Strong consistency (SERIALIZABLE)
-* 🏢 Multi-tenant ready
+- 💰 **Double-entry accounting system** (guaranteed debit = credit)
+- 🔁 **Idempotent transaction processing** (duplicate-proof operations)
+- ⚡ **Real-time balance updates via triggers**
+- 📊 **Indexed views for high-performance reads**
+- 🧠 **Strict isolation level (SERIALIZABLE)**
+- 🏢 **Multi-tenant ready schema design**
+- 🔒 **Database-enforced business rules**
+- 🧪 **Built-in testing and validation scripts**
 
 ---
 
-## 🧠 Architecture
+## 🧠 Architecture Highlights
 
-* 📄 [Architecture Overview](docs/architecture.md)
-* 📊 [Performance Report](docs/performance_report.md)
+- **Database-First Design** → No dependency on application layer  
+- **ACID Compliance** → Every transaction is fully atomic  
+- **Trigger-Based Enforcement** → Real-time validation & updates  
+- **Idempotency Layer** → Safe retries without duplication  
+- **Indexed Views** → Optimized read performance for balances  
+- **Strict Constraints** → Impossible invalid state
+  
+---
+
+## 🗺️ Database Schema
+
+The system is built around a normalized, constraint-driven schema that enforces financial correctness at the database level.
+
+![Database Diagram](docs/diagrams/db_diagram.png)
 
 ---
 
-## 🖼️ System Flow
+## 🖥️ Demo
 
+| Scenario                  | Description                              |
+|--------------------------|------------------------------------------|
+| Transaction Insert       | Debit/Credit enforced automatically      |
+| Duplicate Request        | Ignored via idempotency logic            |
+| Balance Query            | Instant via indexed view                 |
+| Concurrent Execution     | Safe under SERIALIZABLE isolation        |
+
+---
+
+## 🖼️ Visuals
+
+### 🔄 System Flow
 ![System Flow](docs/diagrams/system_flow.png)
 
----
-
-## 📊 Before / After (Balance Update)
-
+### 📊 Balance Update (Before / After)
 ![Before After](docs/diagrams/before_after_balance_update.png)
 
 ---
 
-## ⚙️ Setup
+## 🧱 Tech Stack
 
-> ⚠️ This project uses **SQLCMD mode** (`:r` includes).
-> You must run scripts using **sqlcmd**, NOT standard SSMS execution.
+- **Database**: SQL Server  
+- **Language**: T-SQL  
+- **Execution Tool**: sqlcmd  
+- **Architecture Style**: Database-First  
+- **Isolation Level**: SERIALIZABLE  
 
 ---
 
-### 🔧 Step 1 — Initialize Database
+## ⚙️ Installation
 
-Only the **V1 migration** is required to fully set up the system.
+> ⚠️ SQLCMD mode is required (`:r` includes are used)
 
-```bash id="cmd1"
+### 1️⃣ Initialize Database
+
+```bash
 sqlcmd -S . -d master -i database/migrations/V1__init.sql
 ```
+This automatically:
 
-This will automatically:
-
-* Create database
-* Create all tables
-* Apply constraints
-* Create indexes
-* Create triggers
-* Create stored procedures
+- Creates database
+- Builds schema (tables, constraints, indexes)
+- Registers triggers
+- Deploys stored procedures
 
 ---
 
-### 🔁 Optional Migrations
-
-Additional migrations can be applied if needed:
-
-```text id="opt1"
-V2  → idempotency
-V3  → audit
-V4  → soft delete
-V5  → reporting
-V6  → concurrency
-V7  → rollback example
-V8  → partitioning
-V9  → performance indexing
+## 🗄️ Database Setup
+Connection String Example
+```
+Server=localhost;
+Database=LedgerShieldDB;
+Trusted_Connection=True;
+MultipleActiveResultSets=true;
 ```
 
 ---
 
 ## 🌱 Seed Data
-
-Basic test data:
-
-```bash id="cmd2"
+Basic Dataset
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/seeds/seed_basic.sql
 ```
-
-Heavy test data:
-
-```bash id="cmd3"
+Heavy Dataset (Load Simulation)
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/seeds/seed_heavy.sql
 ```
 
 ---
 
-## 🧪 Testing
-
-### ⚡ Performance Test
-
-```bash id="cmd4"
-sqlcmd -S . -d LedgerShieldDB -i database/tests/performance/performance_test.sql
-```
+## 🔐 Authentication & Security
+- 🔒 Transaction-level consistency via SERIALIZABLE isolation
+- 🧾 Idempotency keys prevent replay attacks
+- 🧠 Business rules enforced via:
+  * constraints
+  * triggers
+  * stored procedures
+- 🚫 Invalid financial states are structurally impossible
 
 ---
 
-### 🧠 Execution Plan Analysis
+## 🧩 Key Functionalities
+### 💰 Double-Entry Ledger
 
-```bash id="cmd5"
+Every transaction must satisfy:
+
+- Total Debit = Total Credit
+- Otherwise → rejected at DB level
+  
+### 🔁 Idempotent Transactions
+- Unique request keys
+- Safe retries
+- No duplication risk
+
+### ⚡ Real-Time Balance Calculation
+- Trigger-driven updates
+- Indexed view acceleration
+- No stale reads
+
+### 🧪 Built-in Testing Suite
+Performance Test
+```bash
+sqlcmd -S . -d LedgerShieldDB -i database/tests/performance/performance_test.sql
+```
+Execution Plan Analysis
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/tests/performance/execution_plan_raw.sql
 sqlcmd -S . -d LedgerShieldDB -i database/tests/performance/execution_plan_indexed_view.sql
 ```
-
----
-
-### 🔍 Integrity Tests
-
-```bash id="cmd6"
+Integrity Validation
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/tests/integrity/ledger_integrity_test.sql
 sqlcmd -S . -d LedgerShieldDB -i database/tests/integrity/balance_consistency_test.sql
 ```
-
----
-
-### 🔁 Concurrency Test
-
-```bash id="cmd7"
+Concurrency Test
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/tests/concurrency/concurrency_test.sql
 ```
-
----
-
-### 📦 Load Test
-
-```bash id="cmd8"
+Load Test
+```bash
 sqlcmd -S . -d LedgerShieldDB -i database/tests/load/load_test.sql
 ```
 
----
-
-## 📁 Project Structure
-
-```text id="tree1"
+### 📁 Project Structure
+```
 database/
 │
 ├── migrations/
@@ -177,24 +214,19 @@ docs/
 
 ---
 
-## 🧠 Core Concept
-
-> Incorrect data cannot be written
-
-LedgerShield enforces correctness through:
-
-* database constraints
-* transaction boundaries
-* trigger-based validation
+## 🔮 Future Improvements
+- 📡 REST API layer (optional integration)
+- 📊 Real-time analytics dashboard
+- 🧾 Audit log visualization tools
+- ⚙️ Automated migration runner
+- ☁️ Cloud-native deployment (Azure SQL / AWS RDS)
+- 🔐 Row-level security enhancements
 
 ---
 
-## 📌 Notes
+## 📜 License
 
-* This is a **database-first system**
-* No application layer is required
-* All business rules are enforced in SQL Server
-* Designed for **correctness over availability**
+This project is licensed under the MIT License.
 
 ---
 
